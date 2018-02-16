@@ -16,7 +16,6 @@
 
   // Defines a Kubernetes deployment
   local service = {
-    kind: "Service",
     metadata: {
       name: $.serviceName,
     },
