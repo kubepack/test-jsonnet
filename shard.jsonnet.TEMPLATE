@@ -1,31 +1,27 @@
-local serviceDeployment = import "service-deployment.jsonnet.TEMPLATE";
+
 
 {
-  // Required arguments
-  customerName:: error "customerName must be defined",
-  release:: error "release must be defined",
+    // REQUIRED Arguments
+    name:: error "name must be defined",
+    namespace:: error "namespace must be defined",
 
-  // Optional arguments
-  commonConf:: {
-    customerName: $.customerName,
-    database: "user-db.databricks.us-west-2.rds.amazonaws.com",
-  },
+    local service = {
+        metadata: {
+          name: $.name,
+          namespace: $.namespace,
+        },
+        spec: {
+          selector: {
+            serviceName: $.name,
+          }
+          // Some required fields omitted for brevity -- you can refer to
+          // https://kubernetes.io/docs/concepts/services-networking/service/
+          // for more information on defining services.
+        }
+      },
 
-  local webapp = serviceDeployment + {
-    serviceName:: $.customerName + "-webapp",
-    dockerImage:: "webapp:" + $.release,
-    serviceConf:: $.commonConf + {
-      managerAddress: $.customerName + "-manager.prod.svc.cluster.local",
-    },
-  },
-
-  local manager = serviceDeployment + {
-    serviceName:: $.customerName + "-manager",
-    dockerImage:: "manager:" + $.release,
-    serviceConf:: $.commonConf,
-  },
-
-  apiVersion: "v1",
-  kind: "Service",
-  webapp.service,
+      apiVersion: "v1",
+      kind: "Service",
+      metadata: service.metadata,
+      spec: service.spec,
 }
