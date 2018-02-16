@@ -66,6 +66,6 @@
 
   // Wrap up both the service and deployment in a Kubernetes resource list.
   apiVersion: "v1",
-  kind: "List",
-  items: [service, deployment],
+  kind: "Service",
+  service: service,
 }
